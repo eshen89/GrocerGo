@@ -3,647 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grocery Shopping List App</title>
+    <title>Grocery List App</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 50%, #fff1f2 100%);
-        }
-        .mobile-frame {
-            width: 375px;
-            height: 812px;
-            border: 12px solid #1a1a1a;
-            border-radius: 50px;
-            overflow: hidden;
-            position: relative;
-            background: #1a1a1a;
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.15),
-                0 12px 24px -8px rgba(0, 0, 0, 0.12),
-                inset 0 0 0 2px rgba(255, 255, 255, 0.1);
-        }
-        .screen-container {
-            height: 100%;
             background: #ffffff;
-            position: relative;
-            overflow: hidden;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #faf8ff 0%, #f0f7ff 50%, #fff5f5 100%);
-            position: relative;
-            backdrop-filter: blur(20px);
+        .page-gradient {
+            background: linear-gradient(
+                135deg,
+                #fdefd0 10%,
+                #e0f2fe 50%,
+                #f0fdf4 100%
+            );
         }
-        .gradient-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
-            opacity: 0.02;
-            pointer-events: none;
-        }
-        .page-container {
-            display: flex;
-            gap: 2rem;
-            padding: 2rem;
-            overflow-x: auto;
-            align-items: flex-start;
-        }
-        .list-card {
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-        .list-card:hover {
-            transform: translateY(-3px);
-        }
-        .item-card {
-            transition: all 0.2s ease;
-        }
-        .item-card:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-        .category-tag {
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            background-color: rgba(0, 0, 0, 0.05);
-            color: black;
-            white-space: nowrap;
-        }
-        .item-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-        .thumbnail {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            object-fit: cover;
-        }
-        .items-container {
-            height: calc(100% - 180px);
+        
+        /* Custom scrolling styles */
+        .scrollable-list {
             overflow-y: auto;
-            padding-right: 4px;
-            margin-right: -4px;
-            cursor: grab;
-            user-select: none;
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            &::-webkit-scrollbar {
-                display: none;
-            }
-            /* Hide scrollbar for IE, Edge and Firefox */
+            -webkit-overflow-scrolling: touch; /* Enable momentum scrolling on iOS */
+            scroll-behavior: smooth;
+            height: calc(100% - 100px); /* Adjust based on header height */
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .scrollable-list::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollable-list {
             -ms-overflow-style: none;
             scrollbar-width: none;
-        }
-        .items-container.grabbing {
-            cursor: grabbing;
-        }
-        .gradient-btn {
-            background: linear-gradient(135deg, #faf8ff 0%, #f0f7ff 100%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-        .gradient-btn:hover {
-            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            transform: translateY(-1px);
-        }
-        .gradient-btn.active {
-            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-            border: none;
-            color: white;
-        }
-        .add-button {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
-            color: #9333ea;
-            box-shadow: 0 4px 6px -1px rgba(147, 51, 234, 0.2), 0 2px 4px -1px rgba(147, 51, 234, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        .add-button:hover {
-            transform: translateY(-1px);
-            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-            box-shadow: 0 6px 8px -1px rgba(147, 51, 234, 0.3), 0 4px 6px -1px rgba(147, 51, 234, 0.2);
-        }
-        .add-button.white {
-            background: linear-gradient(135deg, #faf8ff 0%, #f0f7ff 100%);
-            color: black;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        .add-button.white:hover {
-            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
-        }
-        .tags-container {
-            display: flex;
-            gap: 4px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            &::-webkit-scrollbar {
-                display: none;
-            }
-            /* Hide scrollbar for IE, Edge and Firefox */
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .categories-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .categories-scroll {
-            display: flex;
-            gap: 0.5rem;
-            overflow-x: auto;
-            padding: 0.25rem 0;
-            cursor: grab;
-            user-select: none;
-            flex: 1;
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            &::-webkit-scrollbar {
-                display: none;
-            }
-            /* Hide scrollbar for IE, Edge and Firefox */
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .categories-scroll.grabbing {
-            cursor: grabbing;
-        }
-        .category-btn {
-            white-space: nowrap;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 9999px;
-            transition: all 0.2s ease;
-        }
-        .category-btn.active {
-            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-            color: white;
-            border: none;
-        }
-        .category-btn.inactive {
-            background: linear-gradient(135deg, #faf8ff 0%, #f0f7ff 100%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: black;
-        }
-        .category-btn.inactive:hover {
-            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
-            transform: translateY(-1px);
-        }
-        .action-btn {
-            padding: 0.5rem;
-            border-radius: 9999px;
-            transition: all 0.2s ease;
-        }
-        .action-btn:hover {
-            background: linear-gradient(135deg, #faf8ff 0%, #f0f7ff 100%);
-            transform: translateY(-1px);
-        }
-        .items-badge {
-            white-space: nowrap;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 9999px;
-            font-weight: 500;
-            margin-left: 0.75rem;
-        }
-        .items-badge.green {
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            color: #15803d;
-        }
-        .items-badge.blue {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            color: #1e40af;
-        }
-        .items-badge.purple {
-            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-            color: #6b21a8;
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-100 p-8">
-    <div class="page-container">
-        <!-- Page 1: Shopping Lists Overview -->
-        <div class="mobile-frame">
-            <div class="screen-container">
-                <div class="gradient-bg h-full p-6">
-                    <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h1 class="text-2xl font-bold text-black">My Lists</h1>
-                            <p class="text-xs text-black/60">Organize your grocery shopping</p>
-                        </div>
-                        <button class="add-button">
-                            <i class="ri-add-line text-xl"></i>
-                        </button>
-                    </div>
-
-                    <div class="items-container">
-                        <!-- Shopping Lists -->
-                        <div class="space-y-4">
-                            <div class="bg-white/90 rounded-xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer list-card">
-                                <div class="flex gap-4">
-                                    <div class="flex-shrink-0">
-                                        <img src="https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Monthly essentials" class="thumbnail">
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center mb-2">
-                                            <h2 class="font-semibold text-black">Monthly Essentials</h2>
-                                            <span class="items-badge green">15 items</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-black/60 mb-2">
-                                            <i class="ri-calendar-line mr-2"></i>
-                                            <span>Updated 5 days ago</span>
-                                        </div>
-                                        <div class="tags-container">
-                                            <span class="category-tag">Cleaning</span>
-                                            <span class="category-tag">Health</span>
-                                            <span class="category-tag">Pantry</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer list-card">
-                                <div class="flex gap-4">
-                                    <div class="flex-shrink-0">
-                                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Party supplies" class="thumbnail">
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center mb-2">
-                                            <h2 class="font-semibold text-black">Party Supplies</h2>
-                                            <span class="items-badge purple">12 items</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-black/60 mb-2">
-                                            <i class="ri-calendar-line mr-2"></i>
-                                            <span>Updated yesterday</span>
-                                        </div>
-                                        <div class="tags-container">
-                                            <span class="category-tag">Snacks</span>
-                                            <span class="category-tag">Drinks</span>
-                                            <span class="category-tag">Decorations</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer list-card">
-                                <div class="flex gap-4">
-                                    <div class="flex-shrink-0">
-                                        <img src="https://images.unsplash.com/photo-1543168256-418811576931?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Weekly groceries" class="thumbnail">
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center mb-2">
-                                            <h2 class="font-semibold text-black">Weekly Groceries</h2>
-                                            <span class="items-badge blue">8 items</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-black/60 mb-2">
-                                            <i class="ri-calendar-line mr-2"></i>
-                                            <span>Updated 2 days ago</span>
-                                        </div>
-                                        <div class="tags-container">
-                                            <span class="category-tag">Dairy</span>
-                                            <span class="category-tag">Bakery</span>
-                                            <span class="category-tag">Produce</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<body class="p-6">
+    <div class="flex gap-8 justify-center">
+        <!-- Page 1: Main List View -->
+        <div class="w-[375px] min-h-[812px] page-gradient rounded-3xl p-6 shadow-lg relative">
+            <!-- Header with Add Button -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-xl font-semibold text-black">My Groceries</h1>
+                <button class="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
             </div>
-            <div class="bottom-indicator"></div>
+            
+            <!-- Scrollable Shopping Lists -->
+            <div class="scrollable-list space-y-4">
+                <!-- Example lists - Added more to demonstrate scrolling -->
+                <div class="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-shadow">
+                    <h3 class="text-black font-medium">Weekly Essentials</h3>
+                    <p class="text-gray-500 text-sm">8 items · Due tomorrow</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-shadow">
+                    <h3 class="text-black font-medium">Party Supplies</h3>
+                    <p class="text-gray-500 text-sm">12 items · Due in 3 days</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-shadow">
+                    <h3 class="text-black font-medium">Monthly Stock</h3>
+                    <p class="text-gray-500 text-sm">15 items · Due in 5 days</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-shadow">
+                    <h3 class="text-black font-medium">Healthy Snacks</h3>
+                    <p class="text-gray-500 text-sm">6 items · Due in 1 week</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl hover:shadow-md transition-shadow">
+                    <h3 class="text-black font-medium">Baking Supplies</h3>
+                    <p class="text-gray-500 text-sm">10 items · Due in 8 days</p>
+                </div>
+                <!-- Add more list items to ensure scrolling -->
+            </div>
         </div>
 
-        <!-- Page 2: Individual List View -->
-        <div class="mobile-frame">
-            <div class="screen-container">
-                <div class="gradient-bg h-full p-6">
-                    <div class="flex items-center mb-6">
-                        <button class="add-button white mr-3">
-                            <i class="ri-arrow-left-line text-xl"></i>
-                        </button>
-                        <div>
-                            <h1 class="text-xl font-bold text-black">Weekly Groceries</h1>
-                            <p class="text-xs text-black/60">8 items · 3 categories</p>
-                        </div>
-                    </div>
+        <!-- Page 2: List Detail View -->
+        <div class="w-[375px] min-h-[812px] page-gradient rounded-3xl p-6 shadow-lg relative">
+            <div class="flex items-center mb-6">
+                <button class="text-black mr-4">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <h1 class="text-xl font-semibold text-black">Weekly Essentials</h1>
+            </div>
 
-                    <!-- Add Item Input -->
-                    <div class="bg-white/90 rounded-xl p-4 shadow-md mb-6 border border-white/50">
-                        <div class="flex items-center">
-                            <input type="text" placeholder="Add new item" class="flex-1 bg-transparent text-black placeholder-black/40 focus:outline-none">
-                            <button class="add-button">
-                                <i class="ri-add-line text-xl"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Categories -->
-                    <div class="categories-wrapper">
-                        <button class="category-btn active">All Items</button>
-                        <div class="categories-scroll">
-                            <button class="category-btn inactive">Dairy</button>
-                            <button class="category-btn inactive">Bakery</button>
-                            <button class="category-btn inactive">Produce</button>
-                            <button class="category-btn inactive">Beverages</button>
-                            <button class="category-btn inactive">Snacks</button>
-                            <button class="category-btn inactive">Pantry</button>
-                            <button class="category-btn inactive">Frozen</button>
-                        </div>
-                    </div>
-
-                    <div class="items-container">
-                        <!-- Shopping Items -->
-                        <div class="space-y-3">
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Milk" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Milk</span>
-                                        <p class="text-xs text-black/60">2 gallons, whole</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1498654077810-12c21d4d6dc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Eggs" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Eggs</span>
-                                        <p class="text-xs text-black/60">1 dozen, organic</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1598373182133-52452f7691ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Bread" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Bread</span>
-                                        <p class="text-xs text-black/60">2 loaves, whole wheat</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1597362925123-77861d3fbac7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Yogurt" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Yogurt</span>
-                                        <p class="text-xs text-black/60">Greek, plain, 32 oz</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Cheese" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Cheese</span>
-                                        <p class="text-xs text-black/60">Cheddar, sharp, 8 oz</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Butter" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Butter</span>
-                                        <p class="text-xs text-black/60">Unsalted, 1 lb</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Bananas" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Bananas</span>
-                                        <p class="text-xs text-black/60">Organic, 1 bunch</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1587132137056-bfbf0166836e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Apples" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Apples</span>
-                                        <p class="text-xs text-black/60">Honeycrisp, 6 count</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Orange Juice" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Orange Juice</span>
-                                        <p class="text-xs text-black/60">Fresh squeezed, 64 oz</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1621956466895-e4288e847470?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Coffee" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Coffee</span>
-                                        <p class="text-xs text-black/60">Dark roast, whole bean, 1 lb</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/90 rounded-xl p-3 shadow-sm item-card border border-white/50">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="w-5 h-5 rounded-full border-2 border-black/20 mr-3">
-                                    <img src="https://images.unsplash.com/photo-1603046891744-6adcb55d23c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Cereal" class="item-image mr-3">
-                                    <div class="flex-1">
-                                        <span class="text-black font-medium">Cereal</span>
-                                        <p class="text-xs text-black/60">Granola, low sugar, 16 oz</p>
-                                    </div>
-                                    <button class="action-btn">
-                                        <i class="ri-more-2-fill text-black"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Search Bar -->
+            <div class="mb-6">
+                <div class="relative">
+                    <input type="search" 
+                           class="w-full px-4 py-3 rounded-xl bg-gray-50 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                           placeholder="Add new item...">
+                    <svg class="absolute right-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
                 </div>
             </div>
-            <div class="bottom-indicator"></div>
+
+            <!-- Scrollable Items List -->
+            <div class="scrollable-list space-y-3">
+                <!-- Example items - Added more to demonstrate scrolling -->
+                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="h-5 w-5 rounded-md border-gray-300">
+                    <span class="ml-3 text-black">Milk</span>
+                    <span class="ml-auto text-gray-500">2 gallons</span>
+                </div>
+                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="h-5 w-5 rounded-md border-gray-300">
+                    <span class="ml-3 text-black">Eggs</span>
+                    <span class="ml-auto text-gray-500">1 dozen</span>
+                </div>
+                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="h-5 w-5 rounded-md border-gray-300">
+                    <span class="ml-3 text-black">Bread</span>
+                    <span class="ml-auto text-gray-500">2 loaves</span>
+                </div>
+                <!-- Added more items to demonstrate scrolling -->
+                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="h-5 w-5 rounded-md border-gray-300">
+                    <span class="ml-3 text-black">Cheese</span>
+                    <span class="ml-auto text-gray-500">500g</span>
+                </div>
+                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="h-5 w-5 rounded-md border-gray-300">
+                    <span class="ml-3 text-black">Yogurt</span>
+                    <span class="ml-auto text-gray-500">4 packs</span>
+                </div>
+                <!-- Add more items to ensure scrolling -->
+            </div>
         </div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Vertical scroll for items containers
-        const containers = document.querySelectorAll('.items-container');
-        containers.forEach(container => {
-            let isDown = false;
-            let startY;
-            let scrollTop;
-
-            container.addEventListener('mousedown', (e) => {
-                isDown = true;
-                container.classList.add('grabbing');
-                startY = e.pageY - container.offsetTop;
-                scrollTop = container.scrollTop;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                isDown = false;
-                container.classList.remove('grabbing');
-            });
-
-            container.addEventListener('mouseup', () => {
-                isDown = false;
-                container.classList.remove('grabbing');
-            });
-
-            container.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const y = e.pageY - container.offsetTop;
-                const walk = (y - startY) * 1.5;
-                container.scrollTop = scrollTop - walk;
-            });
-
-            // Touch events for vertical scroll
-            container.addEventListener('touchstart', (e) => {
-                isDown = true;
-                container.classList.add('grabbing');
-                startY = e.touches[0].pageY - container.offsetTop;
-                scrollTop = container.scrollTop;
-            });
-
-            container.addEventListener('touchend', () => {
-                isDown = false;
-                container.classList.remove('grabbing');
-            });
-
-            container.addEventListener('touchmove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const y = e.touches[0].pageY - container.offsetTop;
-                const walk = (y - startY) * 1.5;
-                container.scrollTop = scrollTop - walk;
-            }, { passive: false });
-        });
-
-        // Horizontal scroll for categories
-        const categoriesContainers = document.querySelectorAll('.categories-scroll');
-        categoriesContainers.forEach(container => {
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-
-            container.addEventListener('mousedown', (e) => {
-                isDown = true;
-                container.classList.add('grabbing');
-                startX = e.pageX - container.offsetLeft;
-                scrollLeft = container.scrollLeft;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                isDown = false;
-                container.classList.remove('grabbing');
-            });
-
-            container.addEventListener('mouseup', () => {
-                isDown = false;
-                container.classList.remove('grabbing');
-            });
-
-            container.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - container.offsetLeft;
-                const walk = (x - startX) * 1.5;
-                container.scrollLeft = scrollLeft - walk;
-            });
-
-            // Touch events for horizontal scroll
-            container.addEventListener('touchstart', (e) => {
-                isDown = true;
-                container.classList.add('grabbing');
-                startX = e.touches[0].pageX - container.offsetLeft;
-                scrollLeft = container.scrollLeft;
-            });
-
-            container.addEventListener('touchend', () => {
-                isDown = false;
-                container.classList.remove('grabbing');
-            });
-
-            container.addEventListener('touchmove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.touches[0].pageX - container.offsetLeft;
-                const walk = (x - startX) * 1.5;
-                container.scrollLeft = scrollLeft - walk;
-            }, { passive: false });
-        });
-    });
-    </script>
 </body>
 </html> 
