@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Install Flutter
+git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
+export PATH="$PATH:$HOME/flutter/bin"
+
 # Enable web support
 flutter config --enable-web
 
@@ -10,4 +14,7 @@ flutter pub get
 flutter clean
 
 # Build for production
-flutter build web --release --web-renderer canvaskit --base-href / 
+flutter build web --release --web-renderer canvaskit --base-href /
+
+# Verify build output
+ls -la build/web/ 
