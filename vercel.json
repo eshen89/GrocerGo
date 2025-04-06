@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "sudo bash ./build.sh",
+  "buildCommand": "bash ./build.sh",
   "outputDirectory": "build/web",
   "public": true,
   "installCommand": "git config --global --add safe.directory /vercel/path0",

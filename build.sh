@@ -3,27 +3,18 @@
 # Exit on error
 set -e
 
-# Create a non-root user
-useradd -m builder || true
-
-# Set ownership and permissions
-mkdir -p /vercel/flutter
-chown -R builder:builder /vercel/flutter
-chown -R builder:builder .
-
-# Run Flutter commands as non-root user
-runuser -l builder -c '
-export PATH="/vercel/flutter/bin:$PATH"
-export HOME="/home/builder"
+# Set up Flutter environment
+export FLUTTER_ROOT="/vercel/flutter"
+export PATH="$FLUTTER_ROOT/bin:$PATH"
 
 # Install Flutter
-git clone https://github.com/flutter/flutter.git --depth 1 -b stable /vercel/flutter
+git clone https://github.com/flutter/flutter.git --depth 1 -b stable $FLUTTER_ROOT
 
 # Verify flutter installation
 which flutter
 flutter --version
 
-# Disable analytics and accept licenses
+# Disable analytics
 flutter config --no-analytics
 
 # Enable web support
@@ -37,7 +28,6 @@ flutter clean
 
 # Build for production
 flutter build web --release --base-href /
-'
 
 # Verify build output exists
 if [ ! -d "build/web" ]; then
