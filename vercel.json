@@ -8,8 +8,28 @@
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "dest": "/build/web/assets/$1"
+    },
+    {
+      "src": "/icons/(.*)",
+      "dest": "/build/web/icons/$1"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/build/web/manifest.json"
+    },
+    {
+      "src": "/favicon.png",
+      "dest": "/build/web/favicon.png"
+    },
+    {
+      "src": "/(.*)\\.(js|css|wasm)",
+      "dest": "/build/web/$1.$2"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/build/web/$1"
+      "dest": "/build/web/index.html"
     }
   ],
   "headers": [
@@ -33,6 +53,15 @@
     },
     {
       "source": "/(.*).css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*).wasm",
       "headers": [
         {
           "key": "Cache-Control",
