@@ -6,5 +6,8 @@ flutter config --enable-web
 # Get dependencies
 flutter pub get
 
-# Build for production with proper base href
-flutter build web --release --web-renderer canvaskit --base-href / 
+# Clean previous build
+flutter clean
+
+# Build for production
+flutter build web --release --web-renderer canvaskit 
