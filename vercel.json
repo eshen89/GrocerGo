@@ -6,31 +6,8 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/build/web/assets/$1"
-    },
-    {
-      "src": "/icons/(.*)",
-      "dest": "/build/web/icons/$1"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/build/web/manifest.json"
-    },
-    {
-      "src": "/favicon.png",
-      "dest": "/build/web/favicon.png"
-    },
-    {
-      "src": "/(.*)\\.(js|css|wasm)",
-      "dest": "/build/web/$1.$2"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/build/web/index.html"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/build/web/index.html" }
   ],
   "headers": [
     {
