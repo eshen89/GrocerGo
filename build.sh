@@ -26,8 +26,8 @@ flutter pub get
 # Clean previous build
 flutter clean
 
-# Build for production
-flutter build web --release --base-href /
+# Build for production with HTML renderer
+flutter build web --release --web-renderer html --base-href /
 
 # Verify build output exists
 if [ ! -d "build/web" ]; then
@@ -35,5 +35,10 @@ if [ ! -d "build/web" ]; then
     exit 1
 fi
 
-# List build output
-ls -la build/web/ 
+# Show build contents for debugging
+echo "Contents of build/web:"
+ls -la build/web/
+echo "Contents of build/web/assets:"
+ls -la build/web/assets/ || true
+echo "Contents of main.dart.js:"
+head -n 5 build/web/main.dart.js || true 
