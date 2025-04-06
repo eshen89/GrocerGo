@@ -26,8 +26,8 @@ flutter pub get
 # Clean previous build
 flutter clean
 
-# Build for production with HTML renderer
-flutter build web --release --web-renderer html --base-href /
+# Build for production
+flutter build web --release
 
 # Verify build output exists
 if [ ! -d "build/web" ]; then
