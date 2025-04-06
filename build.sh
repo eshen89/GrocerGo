@@ -10,4 +10,4 @@ flutter pub get
 flutter clean
 
 # Build for production
-flutter build web --release --web-renderer canvaskit 
+flutter build web --release --web-renderer canvaskit --base-href / 
